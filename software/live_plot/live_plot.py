@@ -18,12 +18,15 @@ class LivePlot(serial.Serial):
         time.sleep(self.ResetSleepDt)
 
 
+        self.num_lines = 2
         self.window_size = 10.0
         self.data_file = 'data.txt'
+        self.color_list = ['b', 'r', 'g', 'm', 'c']
+        self.label_list = ['sensor {}'.format(i+1) for i in range(self.num_lines)]
 
         self.t_init =  time.time()
         self.t_list = []
-        self.line_list = []
+        self.list_of_data_lists = [[] for i in range(self.num_lines)]
 
         self.running = False
         signal.signal(signal.SIGINT, self.sigint_handler)
@@ -31,15 +34,20 @@ class LivePlot(serial.Serial):
         plt.ion()
         self.fig = plt.figure(1)
         self.ax = plt.subplot(111) 
-        self.line, = plt.plot([0,1], [0,1],'b')
+        self.line_list = []
+        for i in range(self.num_lines):
+            color_ind = i%len(self.color_list)
+            line, = plt.plot([0,1], [0,1],self.color_list[color_ind])
+            line.set_xdata([])
+            line.set_ydata([])
+            self.line_list.append(line)
         plt.grid('on')
         plt.xlabel('t (sec)')
         plt.ylabel('flow  (L/min)')
         self.ax.set_xlim(0,self.window_size)
         self.ax.set_ylim(-0.01,2.01)
         plt.title("FS2012 Flow Sensor")
-        self.line.set_xdata([])
-        self.line.set_ydata([])
+        plt.figlegend(self.line_list,self.label_list,'upper right')
         self.fig.canvas.flush_events()
 
 
@@ -67,27 +75,30 @@ class LivePlot(serial.Serial):
                     line = line.strip()
                     data = line.split(' ')
                     try:
-                        t = data[0]
-                        raw_val = data[1]
+                        t = 1.0e-3*int(data[0])
+                        raw_list = [data[1], data[2]]
                     except IndexError:
                         continue
                     except ValueError:
                         continue
 
-                    print('{0}, {1}'.format(t,raw_val))
+                    liter_per_min_list = [self.raw_to_liter_per_min(x) for x in raw_list]
+                    for data, data_list in zip(liter_per_min_list, self.list_of_data_lists):
+                        data_list.append(data)
 
                     t_elapsed = time.time() - self.t_init
                     self.t_list.append(t_elapsed)
 
-                    liter_per_min = self.raw_to_liter_per_min(raw_val)
-                    self.line_list.append(liter_per_min)
-
+                    num_pop = 0
                     while (self.t_list[-1] - self.t_list[0]) > self.window_size:
                         self.t_list.pop(0)
-                        self.line_list.pop(0)
+                        num_pop += 1
 
-                    self.line.set_xdata(self.t_list)
-                    self.line.set_ydata(self.line_list)
+                    for line, data_list in zip(self.line_list, self.list_of_data_lists):
+                        for i in range(num_pop):
+                            data_list.pop(0)
+                        line.set_xdata(self.t_list)
+                        line.set_ydata(data_list)
 
                     xmin = self.t_list[0]
                     xmax = max(self.window_size, self.t_list[-1])
@@ -95,7 +106,14 @@ class LivePlot(serial.Serial):
                     self.ax.set_xlim(xmin,xmax)
                     self.fig.canvas.flush_events()
                     #plt.pause(0.0001)
-                    fid.write('{0} {1}\n'.format(t_elapsed, liter_per_min))
+                    fid.write('{0} '.format(t_elapsed))
+                    for val in liter_per_min_list:
+                        fid.write('{0}\n'.format(val))
+
+                    print('{:0.2f} '.format(t_elapsed),end='')
+                    for val in liter_per_min_list:
+                        print('{:0.2f} '.format(val),end='')
+                    print()
 
         print('quiting')
         self.write('\n')

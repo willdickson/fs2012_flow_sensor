@@ -1,17 +1,27 @@
 #include "Streaming.h"
-const uint8_t SensorPin = A6; 
+
+const uint8_t NumSensor = 2;
+const uint8_t SensorPins[NumSensor] = {A5, A6}; 
 
 void setup()
 {
     Serial.begin(115200);
-    pinMode(SensorPin,INPUT);
+    for (int i=0; i<NumSensor; i++) 
+    {
+        pinMode(SensorPins[i],INPUT);
+    }
 }
 
 void loop()
 {
-    static int count = 0;
-    uint16_t sensor_raw = analogRead(SensorPin);
-    Serial << count << " " << sensor_raw << endl; 
+    static unsigned long t_start = millis();
+    unsigned long dt = millis() - t_start;
+    Serial << dt; 
+    for (int i=0; i<NumSensor; i++) 
+    {
+        uint16_t sensor_raw = analogRead(SensorPins[i]);
+        Serial << " " << sensor_raw; 
+    }
+    Serial << endl;
     delay(10);
-    count++;
 }
