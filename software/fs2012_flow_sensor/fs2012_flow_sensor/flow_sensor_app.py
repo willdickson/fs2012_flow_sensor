@@ -8,10 +8,10 @@ from mainwindow_ui import Ui_MainWindow
 
 from data_reader import DataReader
 
-class FlowSensorsApp(QtWidgets.QMainWindow, Ui_MainWindow):
+class FlowSensorApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
-        super(FlowSensorsApp,self).__init__(parent)
+        super(FlowSensorApp,self).__init__(parent)
         self.timer_period = 20
         self.data_filename = 'flow_data.txt'
         self.data_pathname = os.path.join(os.path.abspath(os.curdir),'flow_data.txt')
@@ -67,7 +67,7 @@ class FlowSensorsApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 def app_main():
     app = QtWidgets.QApplication(sys.argv)
-    mainWindow = FlowSensorsApp()
+    mainWindow = FlowSensorApp()
     mainWindow.show()
     app.exec_()
 

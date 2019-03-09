@@ -1,0 +1,4 @@
+#!/usr/env python
+import fs2012_flow_sensor
+fs2012_flow_sensor.flow_sensor_app.app_main()
+

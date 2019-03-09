@@ -1,0 +1,9 @@
+#!/usr/env python
+import sys
+import fs2012_flow_sensor
+if len(sys.argv) > 1:
+    port = sys.argv[1]
+else:
+    port = '/dev/ttyUSB0'
+liveplot = fs2012_flow_sensor.live_plot.LivePlot(port=port)
+liveplot.run()
