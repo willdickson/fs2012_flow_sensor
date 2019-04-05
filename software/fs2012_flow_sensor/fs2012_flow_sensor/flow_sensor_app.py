@@ -10,7 +10,7 @@ from data_reader import DataReader
 
 class FlowSensorApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    def __init__(self, parent=None):
+    def __init__(self, port, parent=None):
         super(FlowSensorApp,self).__init__(parent)
         self.timer_period = 20
         self.data_filename = 'flow_data.txt'
@@ -18,7 +18,7 @@ class FlowSensorApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.outfile = None
 
         self.setupUi(self)
-        self.reader = DataReader('/dev/ttyUSB0')
+        self.reader = DataReader(port)
         self.reader.start()
         self.lcd_number_list = [self.lcdNumber1, self.lcdNumber2]
         self.initialize_ui()
@@ -67,7 +67,7 @@ class FlowSensorApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 def app_main():
     app = QtWidgets.QApplication(sys.argv)
-    mainWindow = FlowSensorApp()
+    mainWindow = FlowSensorApp(sys.argv[1])
     mainWindow.show()
     app.exec_()
 
