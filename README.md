@@ -1,17 +1,17 @@
-## fs2012_flow_sensor  
+# fs2012_flow_sensor  
 
 Firmware, Python library, PyQt GUI for working with the FS2012 flow sensors. 
 
 ![screenshot_1](images/flow_sensor_app.png)
 
 
-# Requirements
+## Requirements
 
 * [pyserial](https://pythonhosted.org/pyserial/)
 * [pyqt5](https://pypi.org/project/PyQt5/)
 
 
-# Installation
+## Installation
 
 
 ```bash
@@ -24,7 +24,7 @@ or
 $python setup.py develop 
 ```
 
-# DataReader Example
+## DataReader Example
 
 ```python
 import time
@@ -40,7 +40,7 @@ reader.stop()
 
 ```
 
-# Running the pyqt GUI 
+## Running the pyqt GUI 
 
 ```bash
 $python flow_sensor_app /dev/ttyACM0
