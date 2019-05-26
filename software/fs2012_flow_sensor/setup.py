@@ -21,6 +21,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=['examples',]),
     scripts=['bin/flow_sensor_app', 'bin/flow_sensor_live_plot'],
 )

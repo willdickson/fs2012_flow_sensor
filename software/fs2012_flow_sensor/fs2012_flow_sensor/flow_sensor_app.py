@@ -22,9 +22,10 @@ class FlowSensorApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.reader.start()
         self.lcd_number_list = [self.lcdNumber1, self.lcdNumber2]
         self.initialize_ui()
-
-    def __del__(self):
+    
+    def closeEvent(self,event):
         self.reader.stop()
+        event.accept()
 
     def initialize_ui(self):
         self.set_lcd_colors()
