@@ -40,7 +40,7 @@ reader.stop()
 
 ```
 
-# Running the flow_sensor_app
+# Running the pyqt GUI 
 
 ```bash
 $python flow_sensor_app /dev/ttyACM0
